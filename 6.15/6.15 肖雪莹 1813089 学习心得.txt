@@ -1,0 +1,37 @@
+今天主要学习的内容有：
+一、Git简介
+一种版本控制系统，便于记录每一次修改。
+二、Git安装
+1、下载window git；
+2、配置用户信息
+-git config global user.name；
+-git config global user.email；
+3、下载图形界面工具SourceTree；
+三、本地与远程仓库
+1、创建本地仓库
+使用Sourcetree；使用GitBash；
+$ git init//初始化仓库
+$ echo "have two try" >> test.txt//添加内容到文本
+$ git add test.txt//提交到暂存区
+$ git commit -m"demo2 have a try"//提交到仓库
+$ git status//显示状态
+2、远程仓库
+通过github建立远程仓库与本地仓库之间的联系，对团队合作有巨大意义
+3、克隆仓库
+四、分支管理
+对多人合作，前期各自操作，后期在统一到一起有重要意义
+$ git checkout -b dev//创建并切换分支；
+$ git branch//查看分支；
+$ git merge dev//合并分支；
+$ git branch -d dev//删除分支；
+五、标签管理
+给发布的版本打上一个标签，今后取某个标签的版本，就是把那个打标签的时刻的历史版本取出来，相当于别名
+$ git tag//查看标签
+$ git tag name//添加标签
+$ git tag -a name -m””//指定提交信息
+$ git tag -d name//删除标签
+$ git push origin name//标签发布
+六、使用SourceTree
+     SourceTree是Git的图形化工具，它简化了流程，对初学者比较友好
+七、学习心得
+Git是一种版本控制系统，便于记录每一次修改。同时使用本地仓库与远程仓库连接的方式，对于相隔距离很远的我们来说，提供了很好的交流代码的方式，版本控制对修改代码也更方便。可以说是团队合作方面的利器，具有深远的意义。
