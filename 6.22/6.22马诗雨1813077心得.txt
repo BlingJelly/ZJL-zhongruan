@@ -1,0 +1,5 @@
+6.22 星期一
+1813077 马诗雨
+今天主要了解了Hadoop，Hadoop是一个能够让用户轻松架构和使用的分布式计算平台。用户可以轻松地在Hadoop上开发和运行处理海量数据的应用程序。高可靠性；高扩展性；高效性；高容错性；低成本。
+Hadoop带有用Java语言编写的框架，因此运行在 Linux 生产平台上是非常理想的。Hadoop的分布式架构，将大数据处理引擎尽可能的靠近存储。Hadoop 由许多元素构成。其最底部是 Hadoop Distributed File System（HDFS），它存储 Hadoop 集群中所有存储节点上的文件。HDFS的上一层是MapReduce 引擎，该引擎由 JobTrackers 和 TaskTrackers 组成。
+此外我还学习安装了Apache Hadoop，尝试运行了Hadoop自示例WordCount。安装过程中遇到很多问题，觉得学习编程真的是太不容易了，大哭。
