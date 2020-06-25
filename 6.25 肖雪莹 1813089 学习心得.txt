@@ -1,0 +1,49 @@
+MapReduce是一种编程模型，用于大规模数据集（大于1TB）的并行运算。它们的主要思想，都是从函数式编程语言里借来的。每次一个步骤方法会产生一个状态，这个状态会直接当参数传进下一步中。而不是使用全局变量。
+
+MapReduce框架
+MapReduce将复杂的，运行大规模集群上的并行计算过程高度地抽象两个函数：Map和Reduce
+MapReduce采用“分而治之”策略，将一个分布式文件系统中的大规模数据集，分成许多独立的分片。这些分片可以被多个Map任务并行处理。
+MapReduce设计的一个理念就是“计算向数据靠拢”，而不是“数据向计算靠拢”，原因是，移动数据需要大量的网络传输开销
+MapReduce框架采用了Master/Slave架构，包括一个Master和若干个Slave，Master上运行JobTracker，Slave运行TaskTracker
+Hadoop框架是用JAVA来写的，但是,MapReduce应用程序则不一定要用Java来写。
+JobTracker：初始化作业，分配作业，TaskTracker与其进行通信，协调监控整个作业
+TaskTracker：定期与JobTracker通信，执行Map和Reduce任务
+HDFS：保存作业的数据、配置、jar包、结果
+
+作业调度算法：
+
+FIFO调度器（默认）、公平调度器、容量调度器
+TaskTracker和JobTracker之间的通信与任务的分配是通过心跳机制完成的；
+
+TaskTracker会主动向JobTracker询问是否有作业要做，如果自己可以做，那么就会申请到作业任务，这个任务 可以使Map也可能是Reduce任务；
+
+TaskTraker将代码和配置信息到本地；
+
+分别为每一个Task启动JVM运行任务
+
+任务在运行过程中，首先会将自己的状态汇报给TaskTracker，然后由TaskTracker汇总告之JobTracker；
+
+任务进度是通过计数器来实现的；
+
+JobTracker是在接受到最后一个任务运行完成后，才会将作业标志为成功。
+
+MapReduce编程模型
+MapReduce 由 两 个 阶 段 组 成 ：Map 和 Reduce。
+
+map() 函数以 key/value 对作为输入，产生另外一系列 key/value 对作为中间输出写入本地 磁盘。MapReduce 框架会自动将这些中间数据按照 key 值进行聚集，且 key 值相同（用户可 设定聚集策略，默认情况下是对 key 值进行哈希取模）的数据被统一交给 reduce() 函数处理。
+reduce() 函数以 key 及对应的 value 列表作为输入，经合并 key 相同的 value 值后，产 生另外一系列 key/value 对作为最终输出写入 HDFS。
+指定三个组件分别是 InputFormat、Partitioner 和 OutputFormat， 它们均需要用户根据自己的应用需求配置①指定输入 文件格式。将输入数据切分成若干个 split，且将每个 split 中的数据解析成一个个 map() 函数 要求的 key/value 对。②确定 map() 函数产生的每个 key/value 对发给哪个 Reduce Task 函数处 理。③指定输出文件格式，即每个 key/value 对以何种形式保存到输出文件中。
+
+MapReduce作业运行流程
+1.在客户端启动一个作业。
+
+2.向JobTracker请求一个Job ID。
+
+3.将运行作业所需要的资源文件复制到HDFS上，包括MapReduce程序打包的JAR文件、配置文件和客户端计算所得的输入划分信息。这些文件都存放在JobTracker专门为该作业创建的文件夹中。文件夹名为该作业的Job ID。JAR文件默认会有10个副本（mapred.submit.replication属性控制）；输入划分信息告诉了JobTracker应该为这个作业启动多少个map任务等信息。
+
+4.JobTracker接收到作业后，将其放在一个作业队列里，等待作业调度器对其进行调度（这里是不是很像微机中的进程调度呢，呵呵），当作业调度器根据自己的调度算法调度到该作业时，会根据输入划分信息为每个划分创建一个map任务，并将map任务分配给TaskTracker执行。对于map和reduce任务，TaskTracker根据主机核的数量和内存的大小有固定数量的map槽和reduce槽。这里需要强调的是：map任务不是随随便便地分配给某个TaskTracker的，这里有个概念叫：数据本地化（Data-Local）。意思是：将map任务分配给含有该map处理的数据块的TaskTracker上，同时将程序JAR包复制到该TaskTracker上来运行，这叫“运算移动，数据不移动”。而分配reduce任务时并不考虑数据本地化。
+
+5.TaskTracker每隔一段时间会给JobTracker发送一个心跳，告诉JobTracker它依然在运行，同时心跳中还携带着很多的信息，比如当前map任务完成的进度等信息。当JobTracker收到作业的最后一个任务完成信息时，便把该作业设置成“成功”。当JobClient查询状态时，它将得知任务已完成，便显示一条消息给用户。
+
+以上是在客户端、JobTracker、TaskTracker的层次来分析MapReduce的工作原理的，下面我们再细致一点如下图。
+
